@@ -13,15 +13,19 @@ import puppeteer from 'puppeteer';
 
 
     const consent = '#truste-consent-required';
-    await page.waitForSelector(consent);
-    await page.click(consent);
+    try {
+        await page.waitForSelector(consent);
+        await page.click(consent);
+    } catch (e) {
+        console.log("Pas de consentement");
+    }
 
 
     // Wait and click on first result
     const searchResultSelector = '#product-lister';
     await page.waitForSelector(searchResultSelector);
     await page.click(searchResultSelector);
-    const lis= await page.$x(
+    const lis = await page.$x(
         '//ul[contains(@id,"product-lister")]//li',
     );
     console.log(`${lis.length} elements found`);
@@ -31,7 +35,7 @@ import puppeteer from 'puppeteer';
 
         const title = await li.$eval('p', (p) => p.innerText);
         const match = regex.exec(title);
-        if(match) {
+        if (match) {
             titles.push({couleur: match[1], largeur: match[3] || match[5], hauteur: match[2] || match[4]});
         }
     }
